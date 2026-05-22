@@ -1,0 +1,29 @@
+name: Daily Chinese Learning
+
+on:
+  schedule:
+    - cron: '0 22 * * *'   # 매일 KST 07:00 (= UTC 22:00 전날)
+  workflow_dispatch:
+
+jobs:
+  send-chinese:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Send Chinese lesson
+        env:
+          KAKAO_REST_API_KEY:  ${{ secrets.KAKAO_REST_API_KEY }}
+          KAKAO_CLIENT_SECRET: ${{ secrets.KAKAO_CLIENT_SECRET }}
+          KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+          GH_PAT:              ${{ secrets.GH_PAT }}
+        run: python main.py
