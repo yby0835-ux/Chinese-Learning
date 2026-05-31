@@ -38,8 +38,13 @@
 
 ```
 ┌─────────────────────────────────────────────┐
+│     Pipedream (외부 스케줄러)                 │
+│     매일 10:00 PM UTC (= KST 07:00) 정확히   │
+└──────────────────┬──────────────────────────┘
+                   │ POST workflow_dispatch (GitHub API)
+┌──────────────────▼──────────────────────────┐
 │              GitHub Actions                  │
-│         cron: 매일 KST 07:00                │
+│         workflow_dispatch 수신 즉시 실행      │
 └──────────────────┬──────────────────────────┘
                    │
           ┌────────▼────────┐
@@ -145,6 +150,15 @@
 
 ## 🐛 이슈 해결 이력
 
+### Issue 2 — GitHub Actions cron 스케줄 지연 (44~71분)
+
+| | |
+|---|---|
+| **증상** | 매일 KST 07:00 예약이지만 실제 알림은 07:44~08:11에 도착 |
+| **원인** | UTC 22:00 피크 타임 큐 적체, 평균 59분 지연 발생 |
+| **해결** | GitHub cron 제거 → Pipedream 외부 스케줄러가 매일 10:00 PM UTC에 `workflow_dispatch` API 호출 |
+| **결과** | 지연 없이 KST 07:00 정각에 알림 수신 |
+
 ### Issue 1 — GH_PAT 권한 부족 (Actions 실행 불가)
 
 | | |
@@ -186,3 +200,4 @@ https://github.com/yby0835-ux/Chinese-Learning/actions/workflows/chinese.yml
 | 2026-05-22 | GitHub Actions 스케줄 설정 (KST 07:00) |
 | 2026-05-22 | GitHub Secrets 등록 완료 |
 | 2026-05-22 | 초기 배포 및 정상 동작 확인 ✅ |
+| 2026-05-31 | GitHub cron 지연 문제 분석 (평균 59분) → Pipedream 외부 스케줄러로 전환 ✅ |
