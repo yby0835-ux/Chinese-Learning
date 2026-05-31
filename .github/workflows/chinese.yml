@@ -1,8 +1,6 @@
 name: Daily Chinese Learning
 
 on:
-  schedule:
-    - cron: '0 22 * * *'   # 매일 KST 07:00 (= UTC 22:00 전날)
   workflow_dispatch:
 
 jobs:
